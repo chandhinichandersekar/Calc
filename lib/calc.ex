@@ -85,6 +85,14 @@ defmodule Calc do
         Enum.find_index(tokens, fn(x) -> (x === ")") end)
     end
 
+    def getBeginningTokensBasedOnIndexOfLeftParen(tokens, indexOfLeftParen) do
+        if indexOfLeftParen === 0 do
+            []
+        else
+            Enum.slice(tokens, 0..indexOfLeftParen - 1)
+        end
+    end
+
     def eval(testString) do
         tokens = String.split(testString, "")
         indexOfLeftParen = findIndexOfLeftParen(tokens)
@@ -93,7 +101,7 @@ defmodule Calc do
             tokensFromParens = Enum.slice(tokens, indexOfLeftParen+1..indexOfRightParen-1)
             tokensFromParensString = Enum.join(tokensFromParens, "")
             resultFromParens = evalStatic(tokensFromParensString)
-            beginningTokens = Enum.slice(tokens, 0..indexOfLeftParen - 1)
+            beginningTokens = getBeginningTokensBasedOnIndexOfLeftParen(tokens, indexOfLeftParen)
             resultFromParensArray = [Integer.to_string(resultFromParens)]
             endTokens = Enum.slice(tokens, indexOfRightParen + 1..length(tokens))
             newTokens = beginningTokens ++ resultFromParensArray ++ endTokens
@@ -105,6 +113,7 @@ defmodule Calc do
     end
 end
 
+"""
 test = fn (testString, expectedValue) ->
     IO.inspect testString
     IO.inspect Calc.eval(testString) === expectedValue
@@ -130,3 +139,4 @@ test.("24 / 6 + (5 - 4)", 5)
 test.("24 / 6 + (5 - 4) + 5 + (2 - 3)", 9)
 
 test.("24 / 6 + (5 - 4) + 5 * (26 - 3)", 120)
+"""
